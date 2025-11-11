@@ -1,9 +1,10 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-*.png filter=lfs diff=lfs merge=lfs -text
-*.jpg filter=lfs diff=lfs merge=lfs -text
-*.fbx filter=lfs diff=lfs merge=lfs -text
+
+# Git LFS (Large File Storage) - Unity Assets
 *.psd filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
 *.gif filter=lfs diff=lfs merge=lfs -text
 *.bmp filter=lfs diff=lfs merge=lfs -text
 *.tga filter=lfs diff=lfs merge=lfs -text
@@ -12,6 +13,8 @@
 *.pict filter=lfs diff=lfs merge=lfs -text
 *.dds filter=lfs diff=lfs merge=lfs -text
 *.xcf filter=lfs diff=lfs merge=lfs -text
+
+# Audio
 *.mp3 filter=lfs diff=lfs merge=lfs -text
 *.wav filter=lfs diff=lfs merge=lfs -text
 *.ogg filter=lfs diff=lfs merge=lfs -text
@@ -21,6 +24,8 @@
 *.mod filter=lfs diff=lfs merge=lfs -text
 *.s3m filter=lfs diff=lfs merge=lfs -text
 *.xm filter=lfs diff=lfs merge=lfs -text
+
+# Video
 *.mov filter=lfs diff=lfs merge=lfs -text
 *.avi filter=lfs diff=lfs merge=lfs -text
 *.asf filter=lfs diff=lfs merge=lfs -text
@@ -30,6 +35,9 @@
 *.flv filter=lfs diff=lfs merge=lfs -text
 *.ogv filter=lfs diff=lfs merge=lfs -text
 *.wmv filter=lfs diff=lfs merge=lfs -text
+
+# 3D Models
+*.fbx filter=lfs diff=lfs merge=lfs -text
 *.obj filter=lfs diff=lfs merge=lfs -text
 *.max filter=lfs diff=lfs merge=lfs -text
 *.blend filter=lfs diff=lfs merge=lfs -text
@@ -43,10 +51,15 @@
 *.lwo2 filter=lfs diff=lfs merge=lfs -text
 *.abc filter=lfs diff=lfs merge=lfs -text
 *.3dm filter=lfs diff=lfs merge=lfs -text
+
+# Unity specific
 *.unitypackage filter=lfs diff=lfs merge=lfs -text
 *.cubemap filter=lfs diff=lfs merge=lfs -text
+
+# Compressed Archives
 *.zip filter=lfs diff=lfs merge=lfs -text
 *.7z filter=lfs diff=lfs merge=lfs -text
 *.gz filter=lfs diff=lfs merge=lfs -text
 *.rar filter=lfs diff=lfs merge=lfs -text
 *.tar filter=lfs diff=lfs merge=lfs -text
+
