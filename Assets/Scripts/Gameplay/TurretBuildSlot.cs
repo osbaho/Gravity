@@ -3,6 +3,7 @@ using UnityEngine.Events;
 
 namespace GravityDefenders
 {
+    [RequireComponent(typeof(Collider))]
     public class TurretBuildSlot : MonoBehaviour
     {
         [Header("Placement")] 

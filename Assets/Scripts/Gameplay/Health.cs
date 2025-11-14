@@ -17,7 +17,8 @@ namespace GravityDefenders
         private class HealthChangedUnityEvent : UnityEvent<int, int> { }
 
         [SerializeField] private HealthChangedUnityEvent onHealthChanged = new HealthChangedUnityEvent();
-        public UnityEvent OnDeath;
+        [SerializeField]
+        public UnityEvent OnDeath = new UnityEvent();
 
         public UnityEvent<int, int> OnHealthChangedEvent => onHealthChanged;
     public int MaxHealth => maxHealth;

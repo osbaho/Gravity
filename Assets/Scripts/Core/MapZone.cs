@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 namespace GravityDefenders
 {
+    [RequireComponent(typeof(Collider))]
     public class MapZone : MonoBehaviour
     {
         [Header("Central Zone")]
