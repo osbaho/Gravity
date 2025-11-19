@@ -80,6 +80,7 @@ Assets/
 │   │   ├── WaveManager.cs         # Singleton: spawn de enemigos, oleadas, dificultad
 │   │   ├── MapManager.cs          # Singleton: ondas gravitacionales, expansión de escudo
 │   │   ├── MiningManager.cs       # Singleton: input de minería, raycast a vetas
+│   │   ├── TurretBuilder.cs       # Singleton: construcción de torretas
 │   │   └── SceneBootstrap.cs      # Validador y auto-creación de managers
 │   │
 │   ├── Progression/
@@ -93,7 +94,6 @@ Assets/
 │   │   ├── Health.cs              # Componente de vida (IDamageable)
 │   │   ├── IDamageable.cs         # Interfaz para recibir daño
 │   │   ├── TurretBuildSlot.cs     # Punto de construcción (requiere Collider)
-│   │   ├── TurretBuilder.cs       # Singleton: lógica de construcción de torretas
 │   │   └── ShipPartPickup.cs      # Pickup de partes de nave
 │   │
 │   ├── Turrets/
@@ -216,6 +216,8 @@ git push origin main
 
 ## 🐛 Troubleshooting
 
+> **💡 Guía completa de errores de SceneBootstrap:** Ver [Setup de Escenas - Troubleshooting](./Documentation/SCENE_SETUP.md#-troubleshooting-errores-de-scenebootstrap) para soluciones detalladas de todos los errores de validación.
+
 ### Error: "ENABLE_INPUT_SYSTEM not defined"
 **Causa:** Active Input Handling no está configurado correctamente  
 **Solución:**
@@ -229,6 +231,10 @@ git push origin main
 1. Seleccionar cámara en escena
 2. Inspector > Tag > MainCamera
 3. Si usas Cinemachine, añade `CinemachineBrain` al mismo GameObject
+
+### Error: "[SceneBootstrap] ..."
+**Causa:** SceneBootstrap detectó un problema de configuración  
+**Solución:** Ver [guía completa de troubleshooting](./Documentation/SCENE_SETUP.md#-troubleshooting-errores-de-scenebootstrap) con instrucciones paso a paso para cada error específico.
 
 ### Error: "OnMouseDown not firing on MapZone/TurretBuildSlot"
 **Causa:** Falta Collider en el GameObject  

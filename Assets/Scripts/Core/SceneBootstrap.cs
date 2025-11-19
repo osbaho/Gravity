@@ -53,6 +53,7 @@ namespace GravityDefenders
             EnsureSingleton<UpgradeManager>();
             EnsureSingleton<MapManager>();
             EnsureSingleton<MiningManager>();
+            EnsureSingleton<TurretBuilder>();
             EnsureSingleton<WaveManager>();
             EnsureSingleton<GameManager>();
         }

@@ -616,4 +616,217 @@ Hierarchy:
 
 ---
 
+## 🐛 Troubleshooting: Errores de SceneBootstrap
+
+**SceneBootstrap** realiza validaciones automáticas al iniciar la escena. Si ves errores/warnings en la consola, usa esta guía:
+
+### ❌ Error: "Input System not detected"
+
+**Mensaje completo:**
+```
+[SceneBootstrap] Input System not detected. Ensure package installed and Active Input Handling = Input System.
+```
+
+**Causa:** Input System no está instalado o no está activado.
+
+**Solución:**
+1. Abrir `Window > Package Manager`
+2. Buscar "Input System"
+3. Si no está instalado: Click `Install`
+4. Ir a `Edit > Project Settings > Player > Other Settings`
+5. `Active Input Handling` → Cambiar a **"Input System Package (New)"**
+6. Unity pedirá reiniciar → Click `Yes`
+7. Verificar que `ENABLE_INPUT_SYSTEM` aparece en `Scripting Define Symbols`
+
+---
+
+### ⚠️ Warning: "Cinemachine not detected"
+
+**Mensaje completo:**
+```
+[SceneBootstrap] Cinemachine not detected. Install Cinemachine 3.1.5 or disable this check.
+```
+
+**Causa:** Cinemachine no está instalado (opcional pero recomendado).
+
+**Solución Opción 1 (Instalar):**
+1. `Window > Package Manager`
+2. Click `+` → `Add package by name`
+3. Nombre: `com.unity.cinemachine`
+4. Versión: `3.1.5`
+5. Click `Add`
+
+**Solución Opción 2 (Deshabilitar check):**
+1. Seleccionar `SceneBootstrap` en Hierarchy
+2. Inspector → Deshabilitar `Require Cinemachine Brain On Main Camera`
+
+---
+
+### ⚠️ Warning: "MainCamera missing CinemachineBrain component"
+
+**Mensaje completo:**
+```
+[SceneBootstrap] MainCamera missing CinemachineBrain component.
+```
+
+**Causa:** Cinemachine está instalado pero MainCamera no tiene el componente.
+
+**Solución:**
+1. Seleccionar `Main Camera` en Hierarchy
+2. Inspector → Click `Add Component`
+3. Buscar `Cinemachine Brain`
+4. Click para añadir
+
+**Alternativa:** Deshabilitar el check en SceneBootstrap si no usas Cinemachine.
+
+---
+
+### ❌ Error: "No MainCamera found"
+
+**Mensaje completo:**
+```
+[SceneBootstrap] No MainCamera found. Tag a camera as MainCamera.
+```
+
+**Causa:** No hay ninguna cámara con tag `MainCamera` en la escena.
+
+**Solución:**
+1. Si tienes una cámara sin tag:
+   - Seleccionarla en Hierarchy
+   - Inspector → Tag → `MainCamera`
+
+2. Si no tienes cámara:
+   - `GameObject > Camera`
+   - Automáticamente tendrá tag `MainCamera`
+
+---
+
+### ❌ Error: "Tag 'Enemy' is not defined in Tag Manager"
+
+**Mensaje completo:**
+```
+[SceneBootstrap] Tag 'Enemy' is not defined in Tag Manager.
+```
+
+**Causa:** El tag `Enemy` no existe en el proyecto.
+
+**Solución:**
+1. `Edit > Project Settings > Tags and Layers`
+2. Expandir `Tags`
+3. Click en primer slot vacío (ej: `Tag 0`)
+4. Escribir: `Enemy`
+5. Cerrar ventana
+
+---
+
+### ❌ Error: "MapZone '[nombre]' has no Collider"
+
+**Mensaje completo:**
+```
+[SceneBootstrap] MapZone 'MapZone_Central' has no Collider. OnMouseDown won't fire.
+```
+
+**Causa:** Un GameObject con componente `MapZone` no tiene `Collider`.
+
+**Solución:**
+1. Buscar el GameObject mencionado en Hierarchy
+2. Seleccionarlo
+3. Inspector → `Add Component`
+4. Añadir `Box Collider` o `Mesh Collider` (según geometría)
+
+**Nota:** `MapZone` tiene `[RequireComponent(typeof(Collider))]`, esto previene creación sin collider, pero objetos viejos pueden no tenerlo.
+
+---
+
+### ❌ Error: "TurretBuildSlot '[nombre]' has no Collider"
+
+**Mensaje completo:**
+```
+[SceneBootstrap] TurretBuildSlot 'TurretSlot_01' has no Collider. OnMouseDown won't fire.
+```
+
+**Causa:** Un GameObject con `TurretBuildSlot` no tiene `Collider`.
+
+**Solución:**
+1. Buscar el GameObject en Hierarchy
+2. Seleccionarlo
+3. Inspector → `Add Component`
+4. Añadir `Box Collider` (recomendado para slots)
+5. Ajustar tamaño del collider para que sea clickeable
+
+---
+
+### ⚠️ Warning: "ResourceVein '[nombre]' on layer [X] not included in MiningManager.miningLayerMask"
+
+**Mensaje completo:**
+```
+[SceneBootstrap] ResourceVein 'ResourceVein_A' on layer Default not included in MiningManager.miningLayerMask.
+```
+
+**Causa:** La veta de recursos no está en una capa incluida en el LayerMask de MiningManager.
+
+**Solución:**
+1. **Opción A (Cambiar capa del vein):**
+   - Seleccionar el `ResourceVein` en Hierarchy
+   - Inspector → Layer → `Mining` (o la capa configurada)
+   
+2. **Opción B (Crear capa Mining si no existe):**
+   - `Edit > Project Settings > Tags and Layers`
+   - Expandir `Layers`
+   - Asignar `Mining` a un slot vacío (ej: `User Layer 8`)
+   - Volver al ResourceVein y asignar Layer `Mining`
+
+3. **Opción C (Actualizar MiningManager LayerMask):**
+   - Seleccionar `MiningManager` en Hierarchy
+   - Inspector → `Mining Layer Mask`
+   - Incluir la capa donde están las vetas (ej: `Default`)
+
+**Recomendación:** Usar una capa dedicada `Mining` para separar vetas de otros objetos.
+
+---
+
+### ℹ️ Info: "Created missing manager: [ManagerName]"
+
+**Mensaje completo:**
+```
+[SceneBootstrap] Created missing manager: GameManager
+[SceneBootstrap] Created missing manager: ResourceManager
+...
+```
+
+**Causa:** Los managers no existían en la escena y fueron creados automáticamente.
+
+**Estado:** ✅ **Esto es normal y esperado**. No requiere acción.
+
+**Explicación:** SceneBootstrap auto-crea managers faltantes en este orden:
+1. ResourceManager
+2. MetaProgressionManager
+3. UpgradeManager
+4. MapManager
+5. MiningManager
+6. TurretBuilder
+7. WaveManager
+8. GameManager
+
+---
+
+### 🔧 Deshabilitar Validaciones
+
+Si una validación específica no es relevante para tu escena de prueba:
+
+1. Seleccionar `SceneBootstrap` en Hierarchy
+2. Inspector → Expandir sección `Validation`
+3. Deshabilitar checks individuales:
+   - `Require Main Camera`
+   - `Require Cinemachine Brain On Main Camera`
+   - `Validate Enemy Tag Exists`
+   - `Validate Colliders On Clickable`
+   - `Validate Mining Layer Mask`
+
+O deshabilitar todo: `Validate On Start` = ✗
+
+**Nota:** En la escena principal del juego, mantener todas las validaciones activas.
+
+---
+
 **Siguiente paso:** Ver [ScriptableObjects y Configuración](./SCRIPTABLE_OBJECTS.md) para crear arquetipos y configuración de gameplay.

@@ -26,6 +26,7 @@ MetaProgressionManager (Awake, lee mejoras permanentes)
 UpgradeManager (Awake)
 MapManager (Awake)
 MiningManager (Awake)
+TurretBuilder (Awake)
 WaveManager (Awake)
 GameManager (Awake)
   ↓
@@ -347,6 +348,36 @@ public UnityEvent<int, MiningResourceType> ResourcesMinedEvent { get; }
    - `ResourcesMinedEvent(amount, type)`
 
 **Nota:** Requiere `ENABLE_INPUT_SYSTEM` definido (falla compilación si no)
+
+---
+
+### TurretBuilder
+**Responsabilidad:** Construcción de torretas desde blueprints
+
+**API Pública:**
+```csharp
+public static TurretBuilder Instance { get; }
+
+// Métodos
+public bool TryBuildTurret(TurretBlueprint blueprint, Transform placementPoint);
+```
+
+**Flujo:**
+1. `TurretBuildSlot.OnMouseDown()` invoca `TryBuildTurret()`
+2. Valida que blueprint no sea null y archetype exista
+3. Verifica recursos con `ResourceManager.HasEnoughResources()`
+4. Gasta recursos con `ResourceManager.SpendResources()`
+5. Instancia torreta:
+   - Si blueprint tiene prefab custom → instantiate
+   - Si no → crea GameObject proceduralmente
+6. Añade componente `Turret` y asigna archetype
+7. Posiciona en `placementPoint`
+8. Marca slot como ocupado
+
+**Dependencias:**
+- `ResourceManager` (para verificar/gastar recursos)
+- `TurretBlueprint` (define qué construir)
+- `TurretArchetype` (define stats de la torreta)
 
 ---
 
