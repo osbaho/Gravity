@@ -34,6 +34,15 @@ namespace GravityDefenders
     [SerializeField] private EnemyArchetype tankArchetype;
     [SerializeField] private EnemyArchetype rangedArchetype;
     [SerializeField] private Transform centralShipOverride;
+    [Header("Spawn Point Auto-Discovery")]
+    [Tooltip("If true, WaveManager will try to populate spawnPoints automatically if list is empty.")] [SerializeField] private bool autoDiscoverSpawnPoints = true;
+    [Tooltip("Tag used to find spawn points. Ignored if blank.")] [SerializeField] private string spawnPointTag = "EnemySpawn";
+#if UNITY_EDITOR
+    [Header("Gizmos (Editor Only)")]
+    [SerializeField] private bool drawSpawnPointGizmos = true;
+    [SerializeField] private Color spawnPointGizmoColor = new Color(1f, 0.3f, 0.2f, 0.7f);
+    [SerializeField, Min(0f)] private float spawnPointGizmoRadius = 0.6f;
+#endif
 
         public event System.Action<int> WaveStarted;
     public event System.Action<int> WaveCompleted;
@@ -71,13 +80,26 @@ namespace GravityDefenders
 
         void Start()
         {
+            // Prefer explicit override, then GameManager, then a direct scene lookup as a final fallback
             centralShip = centralShipOverride != null ? centralShipOverride : GameManager.Instance?.CentralShipTransform;
+            if (centralShip == null)
+            {
+                var ship = FindFirstObjectByType<CentralShip>(FindObjectsInactive.Exclude);
+                if (ship != null)
+                {
+                    centralShip = ship.transform;
+                }
+            }
 
             if (centralShip == null)
             {
                 Debug.LogWarning("WaveManager: Central ship reference missing. Assign it in inspector or via GameManager.");
             }
-
+            // Attempt auto-discovery of spawn points if none configured
+            if (spawnPoints.Count == 0)
+            {
+                AutoDiscoverSpawnPoints();
+            }
             if (spawnPoints.Count == 0)
             {
                 Debug.LogError("WaveManager: No spawn points configured.");
@@ -92,6 +114,76 @@ namespace GravityDefenders
 
             StartCoroutine(WaveCycle());
         }
+
+        [ContextMenu("Discover Spawn Points")]
+        private void AutoDiscoverSpawnPoints()
+        {
+            if (!autoDiscoverSpawnPoints) return;
+            int before = spawnPoints.Count;
+
+            // Tag based discovery
+            if (!string.IsNullOrEmpty(spawnPointTag))
+            {
+                try
+                {
+                    foreach (var go in GameObject.FindGameObjectsWithTag(spawnPointTag))
+                    {
+                        if (go != null && !spawnPoints.Contains(go.transform))
+                        {
+                            spawnPoints.Add(go.transform);
+                        }
+                    }
+                }
+                catch (UnityException) { /* Tag not defined, ignore */ }
+            }
+
+            // Marker component discovery
+            foreach (var marker in FindObjectsByType<SpawnPointMarker>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (marker != null && !spawnPoints.Contains(marker.transform))
+                {
+                    spawnPoints.Add(marker.transform);
+                }
+            }
+
+            // Fallback: children of WaveManager
+            if (spawnPoints.Count == 0)
+            {
+                foreach (Transform child in transform)
+                {
+                    if (!spawnPoints.Contains(child))
+                    {
+                        spawnPoints.Add(child);
+                    }
+                }
+            }
+
+            if (spawnPoints.Count > before)
+            {
+                Debug.Log($"WaveManager: Auto-discovered {spawnPoints.Count - before} spawn points (total {spawnPoints.Count}).");
+            }
+        }
+
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            if (!drawSpawnPointGizmos) return;
+            Gizmos.color = spawnPointGizmoColor;
+            if (spawnPoints != null && spawnPoints.Count > 0)
+            {
+                foreach (var t in spawnPoints)
+                {
+                    if (t == null) continue;
+                    Gizmos.DrawSphere(t.position, spawnPointGizmoRadius);
+                }
+            }
+            else
+            {
+                // Visual hint that no spawn points are configured yet
+                Gizmos.DrawWireSphere(transform.position, Mathf.Max(0.2f, spawnPointGizmoRadius * 1.2f));
+            }
+        }
+#endif
 
         void OnDestroy()
         {

@@ -86,7 +86,7 @@ namespace GravityDefenders
                 }
                 else if (requireCinemachineBrainOnMainCamera)
                 {
-                    var brainType = Type.GetType("Cinemachine.CinemachineBrain, Cinemachine");
+                    var brainType = Type.GetType("Unity.Cinemachine.CinemachineBrain, Unity.Cinemachine");
                     if (brainType == null)
                     {
                         LogWarning("Cinemachine not detected. Install Cinemachine 3.1.5 or disable this check.");
